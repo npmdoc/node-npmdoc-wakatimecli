@@ -1,0 +1,554 @@
+<div class="apidocDiv">
+<style>
+/*csslint
+*/
+.apidocDiv {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.apidocDiv a[href] {
+    color: #33f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.apidocDiv a[href]:hover {
+    text-decoration: underline;
+}
+.apidocCodeCommentSpan {
+    background: #bbf;
+    color: #000;
+    display: block;
+}
+.apidocCodeKeywordSpan {
+    color: #d00;
+    font-weight: bold;
+}
+.apidocCodePre {
+    background: #eef;
+    border: 1px solid;
+    color: #777;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+.apidocFooterDiv {
+    margin-top: 20px;
+    text-align: center;
+}
+.apidocModuleLi {
+    margin-top: 10px;
+}
+.apidocSectionDiv {
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+.apidocSignatureSpan {
+    color: #777;
+    font-weight: bold;
+}
+</style>
+<h1>api documentation for
+    <a
+
+        href="https://github.com/JoshLankford/WakaTimeCLI#readme"
+
+    >wakatimecli (v0.1.9)</a>
+</h1>
+<h4>See your WakaTime report directly in the terminal</h4>
+<div class="apidocSectionDiv"><a
+    href="#apidoc.tableOfContents"
+    id="apidoc.tableOfContents"
+><h1>table of contents</h1></a><ol>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.wakatimecli">module wakatimecli</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.wakatimecli.convert">
+            function <span class="apidocSignatureSpan">wakatimecli.</span>convert
+            <span class="apidocSignatureSpan">()</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <span class="apidocSignatureSpan">object <span class="apidocSignatureSpan">wakatimecli.</span>wakatime</span>
+
+        </li>
+
+    </ol></li>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.wakatimecli.convert">module wakatimecli.convert</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.wakatimecli.convert.convert">
+            function <span class="apidocSignatureSpan">wakatimecli.</span>convert
+            <span class="apidocSignatureSpan">()</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.wakatimecli.wakatime">module wakatimecli.wakatime</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.wakatimecli.wakatime.convert">
+            function <span class="apidocSignatureSpan">wakatimecli.wakatime.</span>convert
+            <span class="apidocSignatureSpan">()</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+</ol></div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.wakatimecli" id="apidoc.module.wakatimecli">module wakatimecli</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.wakatimecli.convert" id="apidoc.element.wakatimecli.convert">
+        function <span class="apidocSignatureSpan">wakatimecli.</span>convert
+        <span class="apidocSignatureSpan">()</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function convertThis() {
+
+  var Promise = require(&#x22;bluebird&#x22;);
+  var request = Promise.promisify(require(&#x22;request&#x22;));
+  var moment = require(&#x22;moment&#x22;);
+  var clc = require(&#x27;cli-color&#x27;);
+  var fs = require(&#x27;fs&#x27;);
+
+  // Create clc color variables
+  var yellow = clc.yellow;
+  var blue = clc.blue;
+  var cyan = clc.cyan;
+  var magenta = clc.magenta;
+
+  var apiString = &#x27;?api_key=&#x27;;
+  var homedir = (process.platform === &#x27;win32&#x27;) ? process.env.HOMEPATH : process.env.HOME;
+  var wakafile = homedir + &#x27;/.wakafile&#x27;;
+
+  // Stores API Key in app directory&#x27;
+  var setApiKey = function(apiKey){
+    fs.writeFile(wakafile, apiKey, function (err) {
+      if (err) throw err;
+      console.log(&#x27;API key saved.&#x27;);
+    });
+  };
+
+  // Throw file error
+  var fileError = function(){
+    console.log(&#x27; &#x27;);
+    console.log(cyan(&#x27; No API Key provided&#x27;));
+    console.log(cyan(&#x22; Example: &#x22;) + magenta(&#x22;wakatime -api &#x27;your key here&#x27; &#x22;));
+    console.log(cyan(&#x27; Note: &#x27;) + magenta(&#x22;your api key is available @ https://wakatime.com/settings&#x22;));
+    console.log(&#x27; &#x27;);
+    process.exit(code=0);
+  };
+
+  // Reads API Key from app directory
+  var readApiKey =  function(){
+    var key;
+    try {
+      key = fs.readFileSync(wakafile,&#x27;utf8&#x27;);
+    } catch (e) {
+      fileError();
+    }
+    if(key === &#x27;&#x27;){
+      fileError();
+    }
+    return fs.readFileSync(wakafile,&#x27;utf8&#x27;);
+  }
+
+  // Date function used to format date on API request
+  var todaysDate = function(){
+
+    return {
+      day: moment().format(&#x27;L&#x27;),
+      yesterday: moment().subtract(1, &#x27;days&#x27;).format(&#x27;L&#x27;),
+      week: moment().subtract(6, &#x27;days&#x27;).format(&#x27;L&#x27;),
+      month: moment().subtract(29, &#x27;days&#x27;).format(&#x27;L&#x27;),
+      year: moment().subtract(364, &#x27;days&#x27;).format(&#x27;L&#x27;)
+    }
+
+  };
+
+  var formatTime = function(seconds) {
+    hour = ~~(seconds / 3600);
+    minute = ~~((seconds - (hour * 3600)) / 60);
+    second = seconds % 60;
+    return hour + &#x27; hours &#x27; + minute + &#x27; minutes &#x27; + second + &#x27; seconds &#x27;
+  }
+
+
+  // Prints provided obj to terminal with magenta or blue color
+  var printSection = function(obj, color){
+    // sort it first
+    sortable = [];
+    for (key in obj) {
+      sortable.push([key, obj[key]])
+    }
+    sorted = sortable.sort(function(a, b) { return b[1] - a[1]});
+
+    for (var i=0; i&#x3c;sorted.length; i++){
+      if(color === &#x27;magenta&#x27;){
+        console.log(magenta(&#x27; &#x27; + sorted[i][0] + &#x27;: &#x27;) + formatTime(sorted[i][1]));
+      } else if(color === &#x27;blue&#x27;){
+        console.log(blue(&#x27; &#x27; + sorted[i][0] + &#x27;: &#x27;) + formatTime(sorted[i][1]));
+      }
+    }
+  };
+
+  // Help prints all available options
+  var help = function(){
+    console.log(&#x27; &#x27;);
+    console.log(cyan(&#x27;Please pass an option:&#x27;));
+    console.log(yellow(&#x27;  -? or -help&#x27;));
+    console.log(yellow(&#x27;  -u or -user&#x27;));
+    console.log(yellow(&#x27;  -t or -today&#x27;));
+    console.log(yellow(&#x27;  -y or -yesterday&#x27;));
+    console.log(yellow(&#x27;  -w or -week&#x27;));
+    console.log(&#x27; &#x27;);
+  };
+
+  // Prints user data to the terminal
+  var user = function(){
+    var apiKey = readApiKey();
+    request(&#x22;https://wakatime.com/api/v1/users/current&#x22; + apiString + apiKey, function (error, response, body) {
+      if (!error &#x26;&#x26; response.statusCode == 200) {
+        var body = JSON.parse(body);
+        console.log(&#x27;&#x27;);
+        console.log(cyan(&#x27;WakaTime Account Details:&#x27;));
+        console.log(magenta(&#x27;  Account Created: &#x27;) + body.data.created_at);
+        console.log(magenta(&#x27;  Email: &#x27;) + body.data.email);
+        if(body.data.full_name &#x3e; &#x27;&#x27;) {
+          console.log(magenta(&#x27;  Full Name: &#x27;) + body.data.full_name);
+        }
+        console.log(&#x27;&#x27;);
+      }
+    })
+  };
+
+  // Parse data for Today or Yesterday option &#x26; prints to terminal
+  var details = function(day, dayText){
+    var apiKey = readApiKey();
+    request(&#x22;https://wakatime.com/api/v1/users/current/summaries?start=&#x22;+day+&#x22;&#x26;end=&#x22;+day+&#x22;&#x26;api_key=&#x22;+apiKey, function (error, response
+, body) {
+      if (!error &#x26;&#x26; response.statusCode == 200) {
+        var body = JSON.parse(body);
+
+        console.log(&#x27; &#x27;); // Empty Line for formatting
+        console.log(&#x27; &#x27; +cyan(dayText + &#x27;: &#x27;) + body.data[0].grand_total.text + &#x27; (Total)&#x27;); / ...</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+
+</div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.wakatimecli.convert" id="apidoc.module.wakatimecli.convert">module wakatimecli.convert</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.wakatimecli.convert.convert" id="apidoc.element.wakatimecli.convert.convert">
+        function <span class="apidocSignatureSpan">wakatimecli.</span>convert
+        <span class="apidocSignatureSpan">()</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function convertThis() {
+
+  var Promise = require(&#x22;bluebird&#x22;);
+  var request = Promise.promisify(require(&#x22;request&#x22;));
+  var moment = require(&#x22;moment&#x22;);
+  var clc = require(&#x27;cli-color&#x27;);
+  var fs = require(&#x27;fs&#x27;);
+
+  // Create clc color variables
+  var yellow = clc.yellow;
+  var blue = clc.blue;
+  var cyan = clc.cyan;
+  var magenta = clc.magenta;
+
+  var apiString = &#x27;?api_key=&#x27;;
+  var homedir = (process.platform === &#x27;win32&#x27;) ? process.env.HOMEPATH : process.env.HOME;
+  var wakafile = homedir + &#x27;/.wakafile&#x27;;
+
+  // Stores API Key in app directory&#x27;
+  var setApiKey = function(apiKey){
+    fs.writeFile(wakafile, apiKey, function (err) {
+      if (err) throw err;
+      console.log(&#x27;API key saved.&#x27;);
+    });
+  };
+
+  // Throw file error
+  var fileError = function(){
+    console.log(&#x27; &#x27;);
+    console.log(cyan(&#x27; No API Key provided&#x27;));
+    console.log(cyan(&#x22; Example: &#x22;) + magenta(&#x22;wakatime -api &#x27;your key here&#x27; &#x22;));
+    console.log(cyan(&#x27; Note: &#x27;) + magenta(&#x22;your api key is available @ https://wakatime.com/settings&#x22;));
+    console.log(&#x27; &#x27;);
+    process.exit(code=0);
+  };
+
+  // Reads API Key from app directory
+  var readApiKey =  function(){
+    var key;
+    try {
+      key = fs.readFileSync(wakafile,&#x27;utf8&#x27;);
+    } catch (e) {
+      fileError();
+    }
+    if(key === &#x27;&#x27;){
+      fileError();
+    }
+    return fs.readFileSync(wakafile,&#x27;utf8&#x27;);
+  }
+
+  // Date function used to format date on API request
+  var todaysDate = function(){
+
+    return {
+      day: moment().format(&#x27;L&#x27;),
+      yesterday: moment().subtract(1, &#x27;days&#x27;).format(&#x27;L&#x27;),
+      week: moment().subtract(6, &#x27;days&#x27;).format(&#x27;L&#x27;),
+      month: moment().subtract(29, &#x27;days&#x27;).format(&#x27;L&#x27;),
+      year: moment().subtract(364, &#x27;days&#x27;).format(&#x27;L&#x27;)
+    }
+
+  };
+
+  var formatTime = function(seconds) {
+    hour = ~~(seconds / 3600);
+    minute = ~~((seconds - (hour * 3600)) / 60);
+    second = seconds % 60;
+    return hour + &#x27; hours &#x27; + minute + &#x27; minutes &#x27; + second + &#x27; seconds &#x27;
+  }
+
+
+  // Prints provided obj to terminal with magenta or blue color
+  var printSection = function(obj, color){
+    // sort it first
+    sortable = [];
+    for (key in obj) {
+      sortable.push([key, obj[key]])
+    }
+    sorted = sortable.sort(function(a, b) { return b[1] - a[1]});
+
+    for (var i=0; i&#x3c;sorted.length; i++){
+      if(color === &#x27;magenta&#x27;){
+        console.log(magenta(&#x27; &#x27; + sorted[i][0] + &#x27;: &#x27;) + formatTime(sorted[i][1]));
+      } else if(color === &#x27;blue&#x27;){
+        console.log(blue(&#x27; &#x27; + sorted[i][0] + &#x27;: &#x27;) + formatTime(sorted[i][1]));
+      }
+    }
+  };
+
+  // Help prints all available options
+  var help = function(){
+    console.log(&#x27; &#x27;);
+    console.log(cyan(&#x27;Please pass an option:&#x27;));
+    console.log(yellow(&#x27;  -? or -help&#x27;));
+    console.log(yellow(&#x27;  -u or -user&#x27;));
+    console.log(yellow(&#x27;  -t or -today&#x27;));
+    console.log(yellow(&#x27;  -y or -yesterday&#x27;));
+    console.log(yellow(&#x27;  -w or -week&#x27;));
+    console.log(&#x27; &#x27;);
+  };
+
+  // Prints user data to the terminal
+  var user = function(){
+    var apiKey = readApiKey();
+    request(&#x22;https://wakatime.com/api/v1/users/current&#x22; + apiString + apiKey, function (error, response, body) {
+      if (!error &#x26;&#x26; response.statusCode == 200) {
+        var body = JSON.parse(body);
+        console.log(&#x27;&#x27;);
+        console.log(cyan(&#x27;WakaTime Account Details:&#x27;));
+        console.log(magenta(&#x27;  Account Created: &#x27;) + body.data.created_at);
+        console.log(magenta(&#x27;  Email: &#x27;) + body.data.email);
+        if(body.data.full_name &#x3e; &#x27;&#x27;) {
+          console.log(magenta(&#x27;  Full Name: &#x27;) + body.data.full_name);
+        }
+        console.log(&#x27;&#x27;);
+      }
+    })
+  };
+
+  // Parse data for Today or Yesterday option &#x26; prints to terminal
+  var details = function(day, dayText){
+    var apiKey = readApiKey();
+    request(&#x22;https://wakatime.com/api/v1/users/current/summaries?start=&#x22;+day+&#x22;&#x26;end=&#x22;+day+&#x22;&#x26;api_key=&#x22;+apiKey, function (error, response
+, body) {
+      if (!error &#x26;&#x26; response.statusCode == 200) {
+        var body = JSON.parse(body);
+
+        console.log(&#x27; &#x27;); // Empty Line for formatting
+        console.log(&#x27; &#x27; +cyan(dayText + &#x27;: &#x27;) + body.data[0].grand_total.text + &#x27; (Total)&#x27;); / ...</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.wakatimecli.wakatime" id="apidoc.module.wakatimecli.wakatime">module wakatimecli.wakatime</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.wakatimecli.wakatime.convert" id="apidoc.element.wakatimecli.wakatime.convert">
+        function <span class="apidocSignatureSpan">wakatimecli.wakatime.</span>convert
+        <span class="apidocSignatureSpan">()</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function convertThis() {
+
+  var Promise = require(&#x22;bluebird&#x22;);
+  var request = Promise.promisify(require(&#x22;request&#x22;));
+  var moment = require(&#x22;moment&#x22;);
+  var clc = require(&#x27;cli-color&#x27;);
+  var fs = require(&#x27;fs&#x27;);
+
+  // Create clc color variables
+  var yellow = clc.yellow;
+  var blue = clc.blue;
+  var cyan = clc.cyan;
+  var magenta = clc.magenta;
+
+  var apiString = &#x27;?api_key=&#x27;;
+  var homedir = (process.platform === &#x27;win32&#x27;) ? process.env.HOMEPATH : process.env.HOME;
+  var wakafile = homedir + &#x27;/.wakafile&#x27;;
+
+  // Stores API Key in app directory&#x27;
+  var setApiKey = function(apiKey){
+    fs.writeFile(wakafile, apiKey, function (err) {
+      if (err) throw err;
+      console.log(&#x27;API key saved.&#x27;);
+    });
+  };
+
+  // Throw file error
+  var fileError = function(){
+    console.log(&#x27; &#x27;);
+    console.log(cyan(&#x27; No API Key provided&#x27;));
+    console.log(cyan(&#x22; Example: &#x22;) + magenta(&#x22;wakatime -api &#x27;your key here&#x27; &#x22;));
+    console.log(cyan(&#x27; Note: &#x27;) + magenta(&#x22;your api key is available @ https://wakatime.com/settings&#x22;));
+    console.log(&#x27; &#x27;);
+    process.exit(code=0);
+  };
+
+  // Reads API Key from app directory
+  var readApiKey =  function(){
+    var key;
+    try {
+      key = fs.readFileSync(wakafile,&#x27;utf8&#x27;);
+    } catch (e) {
+      fileError();
+    }
+    if(key === &#x27;&#x27;){
+      fileError();
+    }
+    return fs.readFileSync(wakafile,&#x27;utf8&#x27;);
+  }
+
+  // Date function used to format date on API request
+  var todaysDate = function(){
+
+    return {
+      day: moment().format(&#x27;L&#x27;),
+      yesterday: moment().subtract(1, &#x27;days&#x27;).format(&#x27;L&#x27;),
+      week: moment().subtract(6, &#x27;days&#x27;).format(&#x27;L&#x27;),
+      month: moment().subtract(29, &#x27;days&#x27;).format(&#x27;L&#x27;),
+      year: moment().subtract(364, &#x27;days&#x27;).format(&#x27;L&#x27;)
+    }
+
+  };
+
+  var formatTime = function(seconds) {
+    hour = ~~(seconds / 3600);
+    minute = ~~((seconds - (hour * 3600)) / 60);
+    second = seconds % 60;
+    return hour + &#x27; hours &#x27; + minute + &#x27; minutes &#x27; + second + &#x27; seconds &#x27;
+  }
+
+
+  // Prints provided obj to terminal with magenta or blue color
+  var printSection = function(obj, color){
+    // sort it first
+    sortable = [];
+    for (key in obj) {
+      sortable.push([key, obj[key]])
+    }
+    sorted = sortable.sort(function(a, b) { return b[1] - a[1]});
+
+    for (var i=0; i&#x3c;sorted.length; i++){
+      if(color === &#x27;magenta&#x27;){
+        console.log(magenta(&#x27; &#x27; + sorted[i][0] + &#x27;: &#x27;) + formatTime(sorted[i][1]));
+      } else if(color === &#x27;blue&#x27;){
+        console.log(blue(&#x27; &#x27; + sorted[i][0] + &#x27;: &#x27;) + formatTime(sorted[i][1]));
+      }
+    }
+  };
+
+  // Help prints all available options
+  var help = function(){
+    console.log(&#x27; &#x27;);
+    console.log(cyan(&#x27;Please pass an option:&#x27;));
+    console.log(yellow(&#x27;  -? or -help&#x27;));
+    console.log(yellow(&#x27;  -u or -user&#x27;));
+    console.log(yellow(&#x27;  -t or -today&#x27;));
+    console.log(yellow(&#x27;  -y or -yesterday&#x27;));
+    console.log(yellow(&#x27;  -w or -week&#x27;));
+    console.log(&#x27; &#x27;);
+  };
+
+  // Prints user data to the terminal
+  var user = function(){
+    var apiKey = readApiKey();
+    request(&#x22;https://wakatime.com/api/v1/users/current&#x22; + apiString + apiKey, function (error, response, body) {
+      if (!error &#x26;&#x26; response.statusCode == 200) {
+        var body = JSON.parse(body);
+        console.log(&#x27;&#x27;);
+        console.log(cyan(&#x27;WakaTime Account Details:&#x27;));
+        console.log(magenta(&#x27;  Account Created: &#x27;) + body.data.created_at);
+        console.log(magenta(&#x27;  Email: &#x27;) + body.data.email);
+        if(body.data.full_name &#x3e; &#x27;&#x27;) {
+          console.log(magenta(&#x27;  Full Name: &#x27;) + body.data.full_name);
+        }
+        console.log(&#x27;&#x27;);
+      }
+    })
+  };
+
+  // Parse data for Today or Yesterday option &#x26; prints to terminal
+  var details = function(day, dayText){
+    var apiKey = readApiKey();
+    request(&#x22;https://wakatime.com/api/v1/users/current/summaries?start=&#x22;+day+&#x22;&#x26;end=&#x22;+day+&#x22;&#x26;api_key=&#x22;+apiKey, function (error, response
+, body) {
+      if (!error &#x26;&#x26; response.statusCode == 200) {
+        var body = JSON.parse(body);
+
+        console.log(&#x27; &#x27;); // Empty Line for formatting
+        console.log(&#x27; &#x27; +cyan(dayText + &#x27;: &#x27;) + body.data[0].grand_total.text + &#x27; (Total)&#x27;); / ...</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocFooterDiv">
+    [ this document was created with
+    <a href="https://github.com/kaizhu256/node-utility2" target="_blank">utility2</a>
+    ]
+</div>
+</div>
